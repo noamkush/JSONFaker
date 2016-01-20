@@ -1,0 +1,26 @@
+{
+  "title": "Global Reach LinkNYC registration error response Schema",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "stackTrace": {
+      "type": "array",
+      "description": "The python lines that blew up"
+    },
+    "errorType": {
+      "type": "string",
+      "description": "The type of error.",
+      "enum": [
+        "Exception"
+      ]
+    },
+    "errorMessage": {
+      "type": "string",
+      "description": "The reason for the error"
+    },
+    "message": {
+      "type": "string",
+      "description": "Output from invocation of REST call not related to an error occuring"
+    }
+  }
+}

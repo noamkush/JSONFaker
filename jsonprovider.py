@@ -112,7 +112,7 @@ class JSONProviderUnitTest(unittest.TestCase):
         fake = faker.Faker()
         fake.add_provider(JSONProvider)
 
-        schmeapath = os.getcwd() + os.sep + "exmple_schemas" + os.sep
+        schmeapath = os.getcwd() + os.sep + "example_schemas" + os.sep
         schema_files = [os.path.join(schmeapath, f) for f in os.listdir(schmeapath) if
                         os.path.isfile(os.path.join(schmeapath, f))]
         print schema_files
