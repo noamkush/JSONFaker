@@ -1,0 +1,5 @@
+fake-factory==0.5.3
+functools32==3.2.3.post2
+jsonschema==2.5.1
+rstr==2.2.3
+wheel==0.24.0

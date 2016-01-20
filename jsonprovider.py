@@ -8,11 +8,10 @@ import collections
 import unittest
 import os
 
-
 import rstr
 
-class JSONProvider(faker.providers.BaseProvider):
 
+class JSONProvider(faker.providers.BaseProvider):
     @staticmethod
     def _find_refeence_in_schema(path, schema):
         path_elements = path.split("/")
@@ -28,7 +27,7 @@ class JSONProvider(faker.providers.BaseProvider):
     @staticmethod
     def value_for_schema_element(schema_element, root_schema_element, fake=faker.Faker(), overrides=dict()):
 
-        if "oneOf" in  schema_element.keys():
+        if "oneOf" in schema_element.keys():
             se = random.choice(schema_element["oneOf"])
             print "ONE OF"
             print se
@@ -79,7 +78,9 @@ class JSONProvider(faker.providers.BaseProvider):
             array_value = list()
             for _ in range(0, random.randint(0, random.randint(se.get('minItems', 3), se.get('maxItems', 100)))):
                 array_value.append(JSONProvider.value_for_schema_element(se.get('items',
-                                                                                {"type": random.choice(["string", "boolean","number", "integer"])}),
+                                                                                {"type": random.choice(
+                                                                                    ["string", "boolean", "number",
+                                                                                     "integer"])}),
                                                                          root_schema_element,
                                                                          fake,
                                                                          overrides))
@@ -102,19 +103,18 @@ class JSONProvider(faker.providers.BaseProvider):
             print type(se['type'])
             raise ValueError("Don't know have to create value for schema element type [{}]".format(se['type']))
 
-    def json(self, json_schema, broken=False):
+    def json(self, json_schema):
         return self.value_for_schema_element(json_schema, json_schema)
 
 
 class JSONProviderUnitTest(unittest.TestCase):
-
     def test_example_schemas(self):
         fake = faker.Faker()
         fake.add_provider(JSONProvider)
 
-
-        schmeapath = os.getcwd()+os.sep+"exmple_schemas"+os.sep
-        schema_files = [os.path.join(schmeapath, f) for f in os.listdir(schmeapath) if os.path.isfile(os.path.join(schmeapath, f))]
+        schmeapath = os.getcwd() + os.sep + "exmple_schemas" + os.sep
+        schema_files = [os.path.join(schmeapath, f) for f in os.listdir(schmeapath) if
+                        os.path.isfile(os.path.join(schmeapath, f))]
         print schema_files
         for schema_file in schema_files:
             try:
