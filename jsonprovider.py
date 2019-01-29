@@ -13,24 +13,24 @@ import rstr
 
 class JSONProvider(faker.providers.BaseProvider):
     @staticmethod
-    def _find_refeence_in_schema(path, schema):
+    def _find_reference_in_schema(path, schema):
         path_elements = path.split("/")
         if path.startswith("#"):
             path_elements = path_elements[1:]
+            if not path_elements:
+                return schema
 
         cschema = schema[path_elements[0]]
         if len(path_elements) == 1:
             return cschema
         else:
-            return JSONProvider._find_refeence_in_schema("/".join(path_elements[1:]), cschema)
+            return JSONProvider._find_reference_in_schema("/".join(path_elements[1:]), cschema)
 
     @staticmethod
-    def value_for_schema_element(schema_element, root_schema_element, fake=faker.Faker(), overrides=dict()):
+    def value_for_schema_element(schema_element, root_schema_element, fake=faker.Faker(), overrides={}):
 
         if "oneOf" in schema_element.keys():
             se = random.choice(schema_element["oneOf"])
-            print "ONE OF"
-            print se
         elif "allOf" in schema_element.keys():
             se = dict()
             for rs in schema_element['allOf']:
@@ -39,13 +39,13 @@ class JSONProvider(faker.providers.BaseProvider):
             se = collections.defaultdict(list)
 
             for d in (schema_element["anyOf"]):
-                for key, value in d.iteritems():
+                for key, value in d.items():
                     se[key].append(value)
         else:
             se = copy.copy(schema_element)
 
         if "$ref" in se.keys():
-            se = JSONProvider._find_refeence_in_schema(se['$ref'], root_schema_element)
+            se = JSONProvider._find_reference_in_schema(se['$ref'], root_schema_element)
         if "type" not in se.keys():
             element_type = "string"
         elif type(se['type']) == list:
@@ -100,7 +100,6 @@ class JSONProvider(faker.providers.BaseProvider):
             return object_value
 
         else:
-            print type(se['type'])
             raise ValueError("Don't know have to create value for schema element type [{}]".format(se['type']))
 
     def json(self, json_schema):
@@ -115,10 +114,11 @@ class JSONProviderUnitTest(unittest.TestCase):
         schmeapath = os.getcwd() + os.sep + "example_schemas" + os.sep
         schema_files = [os.path.join(schmeapath, f) for f in os.listdir(schmeapath) if
                         os.path.isfile(os.path.join(schmeapath, f))]
-        print schema_files
+        print(schema_files)
         for schema_file in schema_files:
             try:
-                schema = json.load(open(schema_file))
+                with open(schema_file) as f:
+                    schema = json.load(f)
                 jsonschema.validate(fake.json(schema), schema)
             except Exception as e:
                 self.fail("File <{}> failed with exception <{}>".format(schema_file, e))
